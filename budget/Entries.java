@@ -17,17 +17,24 @@ public class Entries {
         System.out.printf("%nBalance: $%.2f%n%n", balance);
     }
 
-    public void printPurchases() {
-        System.out.println();
-        if (listOfPurchases.size() > 0) {
-            for (var entry : listOfPurchases) {
-                System.out.printf("%s $%.2f%n", entry.getItem(), entry.getCost());
+    public <T> void printPurchases(Class<T> purchaseType) {
+        ArrayList<Purchase> setOfPurchases = new ArrayList<>();
+        for (var entry : listOfPurchases) {
+            if (entry.getClass() == purchaseType || entry.getClass().getSuperclass() == purchaseType) {
+                setOfPurchases.add(entry);
             }
-            System.out.printf("Total sum: $%.2f%n", purchaseTotal);
+        }
+
+        if (setOfPurchases.size() > 0) {
+            double sum = 0;
+            for (var entry : setOfPurchases) {
+                System.out.printf("%s $%.2f%n", entry.getItem(), entry.getCost());
+                sum += entry.getCost();
+            }
+            System.out.printf("Total sum: $%.2f%n", sum);
         } else {
             System.out.println("Purchase list is empty");
         }
-        System.out.println();
     }
 
     public void addIncome(double income) {
@@ -38,5 +45,9 @@ public class Entries {
         balance -= purchase.getCost();
         purchaseTotal += purchase.getCost();
         listOfPurchases.add(purchase);
+    }
+
+    public int getNumberOfPurchases() {
+        return listOfPurchases.size();
     }
 }

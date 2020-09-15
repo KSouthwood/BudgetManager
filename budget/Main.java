@@ -3,24 +3,27 @@ package budget;
 import java.util.Scanner;
 
 public class Main {
+    private static Entries budget = new Entries();
 
     public static void main(String[] args) {
-        Entries budget = new Entries();
         boolean running = true;
 
         while (running) {
-            printMenu();
+            printMainMenu();
             switch (getInput()) {
                 case "1":
                     budget.addIncome(addBalance());
                     System.out.println("Income was added!\n");
                     break;
                 case "2":
-                    budget.addPurchase(addPurchase());
-                    System.out.println("Purchase was added!\n");
+                    addPurchaseMenu();
                     break;
                 case "3":
-                    budget.printPurchases();
+                    if (budget.getNumberOfPurchases() > 0) {
+                        printPurchasesMenu();
+                    } else {
+                        System.out.println("\nPurchase list is empty!\n");
+                    }
                     break;
                 case "4":
                     budget.printBalance();
@@ -36,7 +39,7 @@ public class Main {
         }
     }
 
-    private static void printMenu() {
+    private static void printMainMenu() {
         System.out.println("Choose your action:");
         System.out.println("1) Add income");
         System.out.println("2) Add purchase");
@@ -47,7 +50,6 @@ public class Main {
 
     private static String getInput() {
         final Scanner input = new Scanner(System.in);
-        //        input.close();
         return input.nextLine();
     }
 
@@ -62,11 +64,99 @@ public class Main {
         }
     }
 
-    private static Purchase addPurchase() {
+    private static String[] addPurchase() {
+        String[] purchaseEntry = new String[2];
         System.out.println("\nEnter purchase name:");
-        String item = getInput();
+        purchaseEntry[0] = getInput();
         System.out.println("Enter its price:");
-        String cost = getInput();
-        return new Purchase(item, Double.parseDouble(cost));
+        purchaseEntry[1] = getInput();
+        System.out.println("Purchase was added!");
+        return purchaseEntry;
+    }
+
+    private static void addPurchaseMenu() {
+        String[] purchaseEntry;
+
+        while (true) {
+            printMenuAddPurchase();
+            switch (getInput()) {
+                case "1":
+                    purchaseEntry = addPurchase();
+                    budget.addPurchase(new Food(purchaseEntry[0], Double.parseDouble(purchaseEntry[1])));
+                    break;
+                case "2":
+                    purchaseEntry = addPurchase();
+                    budget.addPurchase(new Clothes(purchaseEntry[0], Double.parseDouble(purchaseEntry[1])));
+                    break;
+                case "3":
+                    purchaseEntry = addPurchase();
+                    budget.addPurchase(new Entertainment(purchaseEntry[0], Double.parseDouble(purchaseEntry[1])));
+                    break;
+                case "4":
+                    purchaseEntry = addPurchase();
+                    budget.addPurchase(new Other(purchaseEntry[0], Double.parseDouble(purchaseEntry[1])));
+                    break;
+                case "5":
+                    System.out.println();
+                    return;
+                default:
+                    System.out.println("Invalid option.");
+                    break;
+            }
+        }
+    }
+
+    private static void printMenuAddPurchase() {
+        System.out.println("\nChoose the type of purchase:");
+        System.out.println("1) Food");
+        System.out.println("2) Clothes");
+        System.out.println("3) Entertainment");
+        System.out.println("4) Other");
+        System.out.println("5) Back");
+    }
+
+    private static void printPurchasesMenu() {
+        while (true) {
+            printMenuPrintPurchases();
+            switch (getInput()) {
+                case "1":
+                    System.out.println("\nFood:");
+                    budget.printPurchases(Food.class);
+                    break;
+                case "2":
+                    System.out.println("\nClothes:");
+                    budget.printPurchases(Clothes.class);
+                    break;
+                case "3":
+                    System.out.println("\nEntertainment:");
+                    budget.printPurchases(Entertainment.class);
+                    break;
+                case "4":
+                    System.out.println("\nOther:");
+                    budget.printPurchases(Other.class);
+                    break;
+                case "5":
+                    System.out.println("\nAll:");
+                    budget.printPurchases(Purchase.class);
+                    break;
+                case "6":
+                    System.out.println();
+                    return;
+                default:
+                    System.out.println("Invalid option!");
+                    break;
+            }
+        }
+
+    }
+
+    private static void printMenuPrintPurchases() {
+        System.out.println("\nChoose the type of purchase:");
+        System.out.println("1) Food");
+        System.out.println("2) Clothes");
+        System.out.println("3) Entertainment");
+        System.out.println("4) Other");
+        System.out.println("5) All");
+        System.out.println("6) Back");
     }
 }
