@@ -1,5 +1,6 @@
 package budget;
 
+import java.io.*;
 import java.util.ArrayList;
 
 public class Entries {
@@ -49,5 +50,51 @@ public class Entries {
 
     public int getNumberOfPurchases() {
         return listOfPurchases.size();
+    }
+
+    public void saveToFile() {
+        try (BufferedWriter outputFile = new BufferedWriter(new FileWriter("purchases.txt"))) {
+            for (var entry : listOfPurchases) {
+                outputFile.write(entry.toString());
+            }
+            outputFile.write(String.format("Balance:%.2f%n", balance));
+            System.out.println("\nPurchases were saved!\n");
+        } catch (IOException e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    public void loadFromFile() {
+        listOfPurchases.clear(); // start from a clean slate
+        purchaseTotal = 0.00;
+        String inputLine;
+        try (BufferedReader inputFile = new BufferedReader(new FileReader("purchases.txt"))) {
+            while ((inputLine = inputFile.readLine()) != null) {
+                String[] input = inputLine.split(":");
+                switch (input[0]) {
+                    case "Balance":
+                        this.balance = Double.parseDouble(input[1]);
+                        break;
+                    case "Food":
+                        addPurchase(new Food(input[1], Double.parseDouble(input[2])));
+                        break;
+                    case "Clothes":
+                        addPurchase(new Clothes(input[1], Double.parseDouble(input[2])));
+                        break;
+                    case "Entertainment":
+                        addPurchase(new Entertainment(input[1], Double.parseDouble(input[2])));
+                        break;
+                    case "Other":
+                        addPurchase(new Other(input[1], Double.parseDouble(input[2])));
+                        break;
+                    default:
+                        System.out.println("Unknown entry: " + inputLine);
+                        break;
+                }
+            }
+            System.out.println("\nPurchases were loaded!\n");
+        } catch (IOException e) {
+            System.out.println("Error: " + e);
+        }
     }
 }

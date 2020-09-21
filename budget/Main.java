@@ -28,6 +28,12 @@ public class Main {
                 case "4":
                     budget.printBalance();
                     break;
+                case "5":
+                    budget.saveToFile();
+                    break;
+                case "6":
+                    budget.loadFromFile();
+                    break;
                 case "0":
                     running = false;
                     System.out.println("\nBye!");
@@ -45,6 +51,8 @@ public class Main {
         System.out.println("2) Add purchase");
         System.out.println("3) Show list of purchases");
         System.out.println("4) Balance");
+        System.out.println("5) Save");
+        System.out.println("6) Load");
         System.out.println("0) Exit");
     }
 
