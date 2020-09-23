@@ -34,6 +34,9 @@ public class Main {
                 case "6":
                     budget.loadFromFile();
                     break;
+                case "7":
+                    analyzeMenu();
+                    break;
                 case "0":
                     running = false;
                     System.out.println("\nBye!");
@@ -53,6 +56,7 @@ public class Main {
         System.out.println("4) Balance");
         System.out.println("5) Save");
         System.out.println("6) Load");
+        System.out.println("7) Analyze (Sort)");
         System.out.println("0) Exit");
     }
 
@@ -166,5 +170,67 @@ public class Main {
         System.out.println("4) Other");
         System.out.println("5) All");
         System.out.println("6) Back");
+    }
+
+    private static void printMenuAnalyze() {
+        System.out.println("\nHow do you want to sort?");
+        System.out.println("1) Sort all purchases");
+        System.out.println("2) Sort by type");
+        System.out.println("3) Sort certain type");
+        System.out.println("4) Back");
+    }
+
+    private static void analyzeMenu() {
+        while (true) {
+            printMenuAnalyze();
+            switch (getInput()) {
+                case "1":
+                    budget.sortPurchasesByCost(Purchase.class, "All:");
+                    break;
+                case "2":
+                    budget.printPurchaseCategoryTotals();
+                    break;
+                case "3":
+                    sortByCategory();
+                    break;
+                case "4":
+                    System.out.println();
+                    return;
+                default:
+                    System.out.println("Invalid option.");
+                    break;
+            }
+        }
+    }
+
+    private static void printSortCategoryMenu() {
+        System.out.println("\nChoose the type of purchase:");
+        System.out.println("1) Food");
+        System.out.println("2) Clothes");
+        System.out.println("3) Entertainment");
+        System.out.println("4) Other");
+    }
+
+    private static void sortByCategory() {
+        while (true) {
+            printSortCategoryMenu();
+            switch (getInput()) {
+                case "1":
+                    budget.sortPurchasesByCost(Food.class, "Food:");
+                    return;
+                case "2":
+                    budget.sortPurchasesByCost(Clothes.class, "Clothes:");
+                    return;
+                case "3":
+                    budget.sortPurchasesByCost(Entertainment.class, "Entertainment:");
+                    return;
+                case "4":
+                    budget.sortPurchasesByCost(Other.class, "Other:");
+                    return;
+                default:
+                    System.out.println("Invalid option.");
+                    break;
+            }
+        }
     }
 }

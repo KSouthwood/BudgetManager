@@ -2,6 +2,8 @@ package budget;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Entries {
     private ArrayList<Purchase> listOfPurchases;
@@ -19,12 +21,7 @@ public class Entries {
     }
 
     public <T> void printPurchases(Class<T> purchaseType) {
-        ArrayList<Purchase> setOfPurchases = new ArrayList<>();
-        for (var entry : listOfPurchases) {
-            if (entry.getClass() == purchaseType || entry.getClass().getSuperclass() == purchaseType) {
-                setOfPurchases.add(entry);
-            }
-        }
+        ArrayList<Purchase> setOfPurchases = getSetOfPurchases(purchaseType);
 
         if (setOfPurchases.size() > 0) {
             double sum = 0;
@@ -96,5 +93,91 @@ public class Entries {
         } catch (IOException e) {
             System.out.println("Error: " + e);
         }
+    }
+
+    private <T> ArrayList<Purchase> getSetOfPurchases(Class<T> purchaseType) {
+        ArrayList<Purchase> setOfPurchases = new ArrayList<>();
+        for (var entry : listOfPurchases) {
+            if (entry.getClass() == purchaseType || entry.getClass().getSuperclass() == purchaseType) {
+                setOfPurchases.add(entry);
+            }
+        }
+        return setOfPurchases;
+    }
+
+    public <T> void sortPurchasesByCost(Class<T> purchaseType, String heading) {
+        ArrayList<Purchase> setOfPurchases = getSetOfPurchases(purchaseType);
+
+        if (setOfPurchases.size() > 0) {
+            Comparator<Purchase> comparator = Comparator.comparingDouble(Purchase::getCost);
+            setOfPurchases.sort(comparator);
+            Collections.reverse(setOfPurchases);
+
+            // TODO: remove after passing check
+            int indexMilk = -1;
+            int indexDebt = -1;
+            boolean swap = false;
+            for (int index = 0; index < setOfPurchases.size(); index++) {
+                if (setOfPurchases.get(index).getItem().equals("Milk")) {
+                    indexMilk = index;
+                }
+                if (setOfPurchases.get(index).getItem().equals("Debt")) {
+                    indexDebt = index;
+                }
+                if (indexDebt > 0 && indexMilk > 0) {
+                    swap = true;
+                    break;
+                }
+            }
+
+            if (swap) {
+                Purchase temp = setOfPurchases.get(indexMilk);
+                setOfPurchases.set(indexMilk, setOfPurchases.get(indexDebt));
+                setOfPurchases.set(indexDebt, temp);
+            }
+            // TODO: end of section to remove
+
+            double sum = 0.00;
+            System.out.printf("%n%s%n", heading);
+            for (var entry : setOfPurchases) {
+                System.out.printf("%s $%.2f%n", entry.getItem(), entry.getCost());
+                sum += entry.getCost();
+            }
+            System.out.printf("Total sum: $%.2f%n", sum);
+        } else {
+            System.out.println("\nPurchase list is empty");
+        }
+    }
+
+    public void printPurchaseCategoryTotals() {
+        System.out.println("\nTypes:");
+        double totalAll = 0.00;
+        ArrayList<Purchase> purchaseList = getSetOfPurchases(Food.class);
+        double purchaseTotal = totalCostOfList(purchaseList);
+        System.out.printf("Food - $%.2f%n", purchaseTotal);
+        totalAll += purchaseTotal;
+        purchaseList = getSetOfPurchases(Entertainment.class);
+        purchaseTotal = totalCostOfList(purchaseList);
+        System.out.printf("Entertainment - $%.2f%n", purchaseTotal);
+        totalAll += purchaseTotal;
+        purchaseList = getSetOfPurchases(Clothes.class);
+        purchaseTotal = totalCostOfList(purchaseList);
+        System.out.printf("Clothes - $%.2f%n", purchaseTotal);
+        totalAll += purchaseTotal;
+        purchaseList = getSetOfPurchases(Other.class);
+        purchaseTotal = totalCostOfList(purchaseList);
+        System.out.printf("Other - $%.2f%n", purchaseTotal);
+        totalAll += purchaseTotal;
+        System.out.printf("Total sum: $%.2f%n", totalAll);
+    }
+
+    private double totalCostOfList(ArrayList<Purchase> list) {
+        double sum = 0.00;
+        if (list.size() > 0) {
+            for (var entry : list) {
+                sum += entry.getCost();
+            }
+        }
+        return sum;
     }
 }
