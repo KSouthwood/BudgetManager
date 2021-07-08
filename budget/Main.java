@@ -3,7 +3,7 @@ package budget;
 import java.util.Scanner;
 
 public class Main {
-    private static Entries budget = new Entries();
+    private static final Entries budget = new Entries();
 
     public static void main(String[] args) {
         boolean running = true;
@@ -65,6 +65,10 @@ public class Main {
         return input.nextLine();
     }
 
+    /**
+     * Gets an amount from the user. Verifies it's a valid positive decimal number.
+     * @return amount to add
+     */
     private static double addBalance() {
         while (true) {
             System.out.println("\nEnter income:");
@@ -76,6 +80,10 @@ public class Main {
         }
     }
 
+    /**
+     * Get a purchase and its price from the user.
+     * @return string array containing the purchase info
+     */
     private static String[] addPurchase() {
         String[] purchaseEntry = new String[2];
         System.out.println("\nEnter purchase name:");

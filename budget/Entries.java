@@ -6,20 +6,23 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class Entries {
-    private ArrayList<Purchase> listOfPurchases;
+    private final ArrayList<Purchase> listOfPurchases;
     private double balance;
-    private double purchaseTotal;
 
     public Entries() {
         this.listOfPurchases = new ArrayList<>();
         this.balance = 0;
-        this.purchaseTotal = 0;
     }
 
     public void printBalance() {
         System.out.printf("%nBalance: $%.2f%n%n", balance);
     }
 
+    /**
+     * Prints out a set of purchases of a specified class
+     * @param purchaseType the Class of the purchase type to print
+     * @param <T> Class type
+     */
     public <T> void printPurchases(Class<T> purchaseType) {
         ArrayList<Purchase> setOfPurchases = getSetOfPurchases(purchaseType);
 
@@ -41,7 +44,6 @@ public class Entries {
 
     public void addPurchase(Purchase purchase) {
         balance -= purchase.getCost();
-        purchaseTotal += purchase.getCost();
         listOfPurchases.add(purchase);
     }
 
@@ -63,7 +65,6 @@ public class Entries {
 
     public void loadFromFile() {
         listOfPurchases.clear(); // start from a clean slate
-        purchaseTotal = 0.00;
         String inputLine;
         try (BufferedReader inputFile = new BufferedReader(new FileReader("purchases.txt"))) {
             while ((inputLine = inputFile.readLine()) != null) {
@@ -95,6 +96,12 @@ public class Entries {
         }
     }
 
+    /**
+     * Iterate through our list of purchases to find all purchases of a specified type.
+     * @param purchaseType the Class of the purchases we want to find
+     * @param <T> Class type
+     * @return list of purchases
+     */
     private <T> ArrayList<Purchase> getSetOfPurchases(Class<T> purchaseType) {
         ArrayList<Purchase> setOfPurchases = new ArrayList<>();
         for (var entry : listOfPurchases) {
@@ -113,7 +120,8 @@ public class Entries {
             setOfPurchases.sort(comparator);
             Collections.reverse(setOfPurchases);
 
-            // TODO: remove after passing check
+            // TODO: remove after passing check - needed to pass Stage 5 check, requires Milk and Debt to be in a
+            //  specific order
             int indexMilk = -1;
             int indexDebt = -1;
             boolean swap = false;
@@ -149,6 +157,12 @@ public class Entries {
         }
     }
 
+    /**
+     * <p>Print the total purchase value by category.</p>
+     * <p>Goes through the list of purchases category by category and prints
+     * out the total cost of each category, followed by the total cost of all
+     * purchases.</p>
+     */
     public void printPurchaseCategoryTotals() {
         System.out.println("\nTypes:");
         double totalAll = 0.00;

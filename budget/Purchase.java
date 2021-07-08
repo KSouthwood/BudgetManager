@@ -1,8 +1,8 @@
 package budget;
 
 public class Purchase {
-    private String item;
-    private double cost;
+    private final String item;
+    private final double cost;
     protected String category;
 
     Purchase(String item, double cost) {
